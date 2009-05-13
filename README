@@ -1,0 +1,38 @@
+ActionMailer is awesome. The deficiency is all mine, but frankly I don't want 
+to maintain a bunch of templates somewhere. I just want to have a string that I
+can email. This lets you send email directly and immediately without having to
+maintain the templates. We use it for managing automatic deploy emails from 
+within capistrano.
+
+Let's see if we can get that down to 5 lines? 
+
+action_mailer_with_temporary_delivery_method do
+  mail = TMail::Mail.new
+  mail.subject,      = "email is awesome"
+  mail.to, mail.from = "tips@nytimes.com", ActionMailer::Base.smtp_settings[:user_name]
+  mail.date          = Time.now
+  mail.body          = "Look ma, I'm sending email without bleeding"
+  ActionMailer::Base.deliver(mail)
+end
+
+Ok, it's not 5 lines, someone would have to be clever and and wrap that with:
+
+def do_my_bidding
+  action_mailer_with_temporary_delivery_method do
+    mail = TMail::Mail.new
+    mail = yield mail
+    ActionMailer::Base.deliver(mail)
+  end
+end
+
+do_my_bidding do |mail|
+  mail.subject,      = "email is awesome"
+  mail.to, mail.from = "tips@nytimes.com", ActionMailer::Base.smtp_settings[:user_name]
+  mail.date          = Time.now
+  mail.body          = "Look ma, I'm sending email without bleeding"
+  mail
+end
+
+Knock yourselves out. Email shouldn't be hard. It's 2009. Email was hard when 
+dinosaurs and glaciers raced each other to the equator. To install drop it into
+RAILS_ROOT/lib and require it from environment.rb

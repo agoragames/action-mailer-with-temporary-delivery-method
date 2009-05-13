@@ -1,0 +1,13 @@
+We needed to send an email from within capistrano every time we were going to 
+do a deploy. 
+
+I did a blog post on this subject here: 
+http://blog.agoragames.com/2009/02/23/automatic-deploy-notifications/#more-152
+
+What's different when you're using this plugin is instead of having all the 
+temporary delivery method crap in your actual recipe you just put this at the top:
+
+require File.join(File.dirname(__FILE__), '..', 'lib', 'action_mailer_with_temporary_delivery_method')
+self.class.send(:include, ActionMailerWithTemporaryDeliveryMethod)
+
+And now you're ready to rock in the manner described in the blog post.
